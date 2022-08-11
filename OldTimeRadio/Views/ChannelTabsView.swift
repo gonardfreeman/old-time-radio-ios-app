@@ -13,7 +13,7 @@ struct ChannelTabsView: View {
     @State var channels: [Channel]
     
     var body: some View {
-        ZStack(alignment: .bottom) {
+        ZStack(alignment: .top) {
             TabView(selection: $currentTabIndex) {
                 ForEach(Array(channels.enumerated()), id: \.offset) { index, element in
                     ChannelView(channelIndex: index)

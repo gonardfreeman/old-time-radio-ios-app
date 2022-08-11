@@ -21,7 +21,8 @@ struct NavBarItemView: View {
             VStack {
                 Spacer()
                 Text(label.capitalized)
-                    .foregroundColor(.blue)
+                    .foregroundColor(currentTab == index ? .blue : Color("TabTextGray"))
+                    .font(.system(size: 14))
                 if currentTab == index {
                     Color.blue
                         .frame(height: 2)
@@ -39,6 +40,11 @@ struct NavBarItemView_Previews: PreviewProvider {
     @Namespace static var namespace
     
     static var previews: some View {
-        NavBarItemView(currentTab: .constant(0), namespace: namespace, index: 0, label: "future")
+        NavBarItemView(
+            currentTab: .constant(1),
+            namespace: namespace,
+            index: 0,
+            label: "future"
+        )
     }
 }

@@ -26,9 +26,14 @@ struct NavigationBarView: View {
             }
             .padding(.horizontal)
         }
-        .background(Color.white)
+        .overlay(
+            Rectangle()
+                .frame(height: 1)
+                .foregroundColor(Color("Border")),
+            alignment: .bottom
+        )
+        .background(Color("BackgroundGray"))
         .frame(height: 50)
-        .edgesIgnoringSafeArea(.top)
     }
 }
 

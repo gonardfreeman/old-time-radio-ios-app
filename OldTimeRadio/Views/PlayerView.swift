@@ -24,16 +24,13 @@ struct PlayerView: View {
                         if isPlaying == true {
                             Image(systemName: "pause")
                                 .font(.largeTitle)
-                                .foregroundColor(Color.white)
                         } else {
                             Image(systemName: "play.circle")
                                 .font(.largeTitle)
-                                .foregroundColor(.white)
                         }
                     }
                     .frame(width: 40, height: 40)
                     Text(show.name)
-                        .foregroundColor(.white)
                         .truncationMode(.tail)
                 }
                 .padding()

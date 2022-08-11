@@ -18,12 +18,6 @@ struct ChannelView: View {
     
     var body: some View {
         ZStack {
-            Image(
-                channelsViewModel.channels[channelIndex].name
-            )
-            .resizable()
-            .scaledToFill()
-            .edgesIgnoringSafeArea(.all)
             VStack {
                 if channelsViewModel.isLoading == false {
                     if let show = channelsViewModel.channelPlaylist.list.first {
@@ -35,7 +29,6 @@ struct ChannelView: View {
                     }
                 } else {
                     Text("Loading...")
-                        .foregroundColor(.black)
                 }
             }
             .padding()
