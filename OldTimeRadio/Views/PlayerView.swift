@@ -15,28 +15,25 @@ struct PlayerView: View {
     @State var isPlaying = false
 
     var body: some View {
-        ZStack {
-            VStack {
-                HStack {
-                    Button(action: {
-                        isPlaying = AudioManager.shared.toggleAudio(channelIndex: channelIndex)
-                    }) {
-                        if isPlaying == true {
-                            Image(systemName: "pause")
-                                .font(.largeTitle)
-                        } else {
-                            Image(systemName: "play.circle")
-                                .font(.largeTitle)
-                        }
-                    }
-                    .frame(width: 40, height: 40)
-                    Text(show.name)
-                        .truncationMode(.tail)
+        HStack {
+            Button(action: {
+                isPlaying = AudioManager.shared.toggleAudio(channelIndex: channelIndex)
+            }) {
+                if isPlaying == true {
+                    Image(systemName: "pause")
+                        .font(.largeTitle)
+                } else {
+                    Image(systemName: "play.circle")
+                        .font(.largeTitle)
                 }
-                .padding()
             }
+            .frame(width: 40, height: 40)
+            Text(show.name)
+                .truncationMode(.tail)
         }
-        .padding()
+        .frame(height: 50)
+        .frame(maxWidth: .infinity)
+        .background(Color("BackgroundGray"))
         .onAppear {
             AudioManager.shared.setCurrentTrack(url: show.url)
             AudioManager.shared.setSeek(offsetValue: offset)
