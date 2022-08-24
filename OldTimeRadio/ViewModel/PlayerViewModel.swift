@@ -10,7 +10,7 @@ import Foundation
 import AVFoundation
 
 final class PlayerViewModel: ObservableObject {
-    static let shared = PlayerViewModel()
+    static var shared: PlayerViewModel = PlayerViewModel()
     
     init() {
         do {
@@ -40,13 +40,19 @@ final class PlayerViewModel: ObservableObject {
         playerQueue.insert(AVPlayerItem(url: safeURL), after: nil)
     }
     
-    func toggleAudio() -> Bool {
+    func setSeek(offsetValue: Double) {
+        playerQueue.currentItem?.seek(to: CMTime(seconds: offsetValue, preferredTimescale: 60000)) { compl in
+            print("seek done: \(compl)")
+        }
+    }
+    
+    func toggleAudio() {
         if playerQueue.isPlaying {
             playerQueue.pause()
-            return false
+        } else {
+            playerQueue.play()
         }
-        playerQueue.play()
-        return true
+        isPlaying.toggle()
     }
     
     @objc private func playerDidFinishPlaying() {

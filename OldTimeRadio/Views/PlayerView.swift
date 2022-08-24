@@ -8,49 +8,66 @@
 import SwiftUI
 
 struct PlayerView: View {
-    var show: PlayListItem
-    var offset: Double
+    init(
+        playerViewModel: PlayerViewModel = .shared,
+        channelViewModel: ChannelViewModel = .shared
+    ) {
+        _playerViewModel = StateObject(wrappedValue: playerViewModel)
+        _channelViewModel = StateObject(wrappedValue: channelViewModel)
+    }
     
-    @State var channelIndex = 0
-    @State var isPlaying = false
-
+    
+    @StateObject var playerViewModel: PlayerViewModel
+    @StateObject var channelViewModel: ChannelViewModel
+    
     var body: some View {
         HStack {
             Button(action: {
-                isPlaying = AudioManager.shared.toggleAudio(channelIndex: channelIndex)
+                playerViewModel.toggleAudio()
             }) {
-                if isPlaying == true {
-                    Image(systemName: "pause")
-                        .font(.largeTitle)
-                } else {
-                    Image(systemName: "play.circle")
-                        .font(.largeTitle)
-                }
+                Image(systemName: playerViewModel.isPlaying ? "pause" : "play.circle")
+                    .font(.largeTitle)
             }
             .frame(width: 40, height: 40)
-            Text(show.name)
-                .truncationMode(.tail)
+            if let firstShow = channelViewModel.channelPlaylist.list.first {
+                Text(firstShow.name)
+                    .truncationMode(.tail)
+            }
         }
         .frame(height: 50)
         .frame(maxWidth: .infinity)
         .background(Color("BackgroundGray"))
         .onAppear {
-            AudioManager.shared.setCurrentTrack(url: show.url)
-            AudioManager.shared.setSeek(offsetValue: offset)
+            channelViewModel.channelPlaylist.list.forEach { show in
+                playerViewModel.addItemToQueue(url: show.url)
+            }
+            playerViewModel.setSeek(
+                offsetValue: channelViewModel.channelPlaylist.initialOffset
+            )
         }
     }
 }
 
 struct PlayerView_Previews: PreviewProvider {
     static var previews: some View {
-        PlayerView(
-            show: PlayListItem(
+        let playerViewModel = PlayerViewModel()
+        let channelViewModel = ChannelViewModel()
+
+        let shows = [
+            PlayListItem(
                 url: "https://ia800205.us.archive.org/20/items/SpaceCadet2/52-03-25_Mission_of_Mercy_001.MP3",
                 archivalUrl: "https://ia800205.us.archive.org/20/items/SpaceCadet2/52-03-25_Mission_of_Mercy_001.MP3",
-                name: "Very long name test Very long name test Very long name test Very long name test Very long name test Very long name test Very long name test ",
-                length: 5.5
-            ),
-            offset: 0.0
+                name: "Space Cadet",
+                length: 1200
+            )
+        ]
+        var playlist = ChanelPlaylist()
+        playlist.list = shows
+        playlist.initialOffset = 1.5
+        channelViewModel.channelPlaylist = playlist
+        return PlayerView(
+            playerViewModel: playerViewModel,
+            channelViewModel: channelViewModel
         )
     }
 }

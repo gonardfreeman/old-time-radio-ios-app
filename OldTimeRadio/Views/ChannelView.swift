@@ -20,12 +20,8 @@ struct ChannelView: View {
         VStack {
             Spacer()
             if channelsViewModel.isLoading == false {
-                if let show = channelsViewModel.channelPlaylist.list.first {
-                    PlayerView(
-                        show: show,
-                        offset: channelsViewModel.channelPlaylist.initialOffset,
-                        channelIndex: channelIndex
-                    )
+                if channelsViewModel.channelPlaylist.list.isEmpty != false {
+                    PlayerView()
                     .overlay(
                         Rectangle()
                             .frame(height: 1)
