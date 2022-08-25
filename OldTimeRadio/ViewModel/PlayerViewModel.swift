@@ -29,6 +29,10 @@ final class PlayerViewModel: ObservableObject {
         playerQueue.removeAllItems()
     }
     
+    func hasItemsToPlay() -> Bool {
+        return playerQueue.currentItem != nil
+    }
+    
     func addItemToQueue(url source: String) {
         let urlHelper = ArchiveURLHelper(mp3: source)
         guard let safeURI = urlHelper.encodedURI else {
@@ -37,7 +41,12 @@ final class PlayerViewModel: ObservableObject {
         guard let safeURL = URL(string: safeURI) else {
             return
         }
-        playerQueue.insert(AVPlayerItem(url: safeURL), after: nil)
+        print(safeURL)
+        if playerQueue.currentItem == nil {
+            playerQueue.insert(AVPlayerItem(url: safeURL), after: nil)
+        } else {
+            playerQueue.insert(AVPlayerItem(url: safeURL), after: playerQueue.currentItem)
+        }
     }
     
     func setSeek(offsetValue: Double) {

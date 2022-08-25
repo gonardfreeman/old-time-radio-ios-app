@@ -20,12 +20,16 @@ struct ContentView: View {
             if channelsViewModel.channels.isEmpty {
                 Text("Loading")
             } else {
-                ChannelTabsView(
-                    currentTabIndex: $currentTabIndex,
-                    channels: channelsViewModel.channels
-                )
-                .onChange(of: currentTabIndex) { value in
-                    channelsViewModel.getPlayChannelList(channelIndex: value)
+                VStack {
+                    ChannelTabsView(
+                        currentTabIndex: $currentTabIndex,
+                        channels: channelsViewModel.channels
+                    )
+                    .onChange(of: currentTabIndex) { value in
+                        channelsViewModel.getPlayChannelList(channelIndex: value)
+                    }
+                    Spacer()
+                    PlayerView()
                 }
             }
         }

@@ -8,7 +8,10 @@
 import SwiftUI
 
 struct ChannelView: View {
-    init(channelsViewModel: ChannelViewModel = .shared, channelIndex: Int = 0) {
+    init(
+        channelsViewModel: ChannelViewModel = .shared,
+        channelIndex: Int = 0
+    ) {
         _channelsViewModel = StateObject(wrappedValue: channelsViewModel)
         self.channelIndex = channelIndex
     }
@@ -19,17 +22,7 @@ struct ChannelView: View {
     var body: some View {
         VStack {
             Spacer()
-            if channelsViewModel.isLoading == false {
-                if channelsViewModel.channelPlaylist.list.isEmpty != false {
-                    PlayerView()
-                    .overlay(
-                        Rectangle()
-                            .frame(height: 1)
-                            .foregroundColor(Color("Border")),
-                        alignment: .top
-                    )
-                }
-            } else {
+            if channelsViewModel.isLoading == true {
                 Text("Loading...")
             }
         }

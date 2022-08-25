@@ -23,7 +23,11 @@ struct PlayerView: View {
     var body: some View {
         HStack {
             Button(action: {
-                playerViewModel.toggleAudio()
+                if playerViewModel.hasItemsToPlay() {
+                    playerViewModel.toggleAudio()
+                } else {
+                    
+                }
             }) {
                 Image(systemName: playerViewModel.isPlaying ? "pause" : "play.circle")
                     .font(.largeTitle)
@@ -32,6 +36,8 @@ struct PlayerView: View {
             if let firstShow = channelViewModel.channelPlaylist.list.first {
                 Text(firstShow.name)
                     .truncationMode(.tail)
+            } else {
+                Text("Loading...")
             }
         }
         .frame(height: 50)
@@ -52,19 +58,17 @@ struct PlayerView_Previews: PreviewProvider {
     static var previews: some View {
         let playerViewModel = PlayerViewModel()
         let channelViewModel = ChannelViewModel()
-
-        let shows = [
+        var channelPlaylist = ChanelPlaylist()
+        channelPlaylist.list = [
             PlayListItem(
-                url: "https://ia800205.us.archive.org/20/items/SpaceCadet2/52-03-25_Mission_of_Mercy_001.MP3",
-                archivalUrl: "https://ia800205.us.archive.org/20/items/SpaceCadet2/52-03-25_Mission_of_Mercy_001.MP3",
-                name: "Space Cadet",
-                length: 1200
+                url: "https://ia902208.us.archive.org/19/items/OTRR_Dimension_X_Singles/Dimension_X_1951-08-23__45_UntitledStory.mp3",
+                archivalUrl: "https://ia802208.us.archive.org/19/items/OTRR_Dimension_X_Singles/Dimension_X_1951-08-23__45_UntitledStory.mp3",
+                name: "Dimension X 45 - Untitled Story [1951-08-23]",
+                length: 1804.82
             )
         ]
-        var playlist = ChanelPlaylist()
-        playlist.list = shows
-        playlist.initialOffset = 1.5
-        channelViewModel.channelPlaylist = playlist
+        channelPlaylist.initialOffset = 1.5
+        channelViewModel.channelPlaylist = channelPlaylist
         return PlayerView(
             playerViewModel: playerViewModel,
             channelViewModel: channelViewModel

@@ -14,6 +14,7 @@ final class ChannelViewModel: ObservableObject {
     @Published var shows:[Show] = []
     @Published var channelPlaylist = ChanelPlaylist()
     
+    @Published var showData = false
     @Published var isLoading = false
     
     let dataService: DataServiceProtocol
@@ -43,9 +44,12 @@ final class ChannelViewModel: ObservableObject {
     
     func getPlayChannelList(channelIndex: Int) {
         isLoading = true
+        showData = false
         if channels.indices.contains(channelIndex) {
             dataService.getPlayChannelList(chanelName: channels[channelIndex].name) { resp in
                 self.channelPlaylist = resp
+                self.showData = self.channelPlaylist.list.isEmpty == false
+                print(self.channelPlaylist.initialOffset)
                 self.isLoading = false
             }
         } else {
