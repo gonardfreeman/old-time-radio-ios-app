@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Foundation
+import MediaPlayer
 import AVFoundation
 
 final class PlayerViewModel: ObservableObject {
@@ -20,8 +21,10 @@ final class PlayerViewModel: ObservableObject {
         }
     }
     
+    @Published var showPlayer = false
     @Published var isPlaying = false
     @Published var currentlyPlaing = 0
+    @Published var currentTitle: String?
     
     var playerQueue = AVQueuePlayer()
     
@@ -41,7 +44,6 @@ final class PlayerViewModel: ObservableObject {
         guard let safeURL = URL(string: safeURI) else {
             return
         }
-        print(safeURL)
         if playerQueue.currentItem == nil {
             playerQueue.insert(AVPlayerItem(url: safeURL), after: nil)
         } else {
@@ -50,21 +52,82 @@ final class PlayerViewModel: ObservableObject {
     }
     
     func setSeek(offsetValue: Double) {
-        playerQueue.currentItem?.seek(to: CMTime(seconds: offsetValue, preferredTimescale: 60000)) { compl in
-            print("seek done: \(compl)")
+        playerQueue.currentItem?.seek(to: CMTime(seconds: offsetValue, preferredTimescale: 60000)) { _ in
+            self.setupRemoteControls()
         }
     }
     
     func toggleAudio() {
+        togglePlayerView()
         if playerQueue.isPlaying {
             playerQueue.pause()
+            removeObserver()
         } else {
             playerQueue.play()
+            setCurrentTitle()
+            addObserver()
         }
         isPlaying.toggle()
     }
     
+    func playAudio() {
+        togglePlayerView()
+        playerQueue.play()
+        isPlaying = true
+        setCurrentTitle()
+        addObserver()
+    }
+    
+    func pauseAudio() {
+        playerQueue.pause()
+        isPlaying = false
+    }
+    
+    private func setupNowPlaying() {
+        // Define Now Playing Info
+        var nowPlayingInfo = [String : Any]()
+        nowPlayingInfo[MPMediaItemPropertyTitle] = currentTitle
+
+        // Set the metadata
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
+    }
+    
+    private func setupRemoteControls() {
+        let commandCenter = MPRemoteCommandCenter.shared()
+        commandCenter.playCommand.addTarget { [unowned self] event in
+            self.playAudio()
+            return .success
+        }
+        commandCenter.pauseCommand.addTarget { [unowned self] event in
+            self.pauseAudio()
+            return .success
+        }
+    }
+    
+    private func togglePlayerView() {
+        if showPlayer == false {
+            showPlayer = true
+        }
+    }
+    
+    private func setCurrentTitle() {
+        guard let safeTitleName = ChannelViewModel.shared.channelPlaylist.list.first?.name else {
+            return
+        }
+        currentTitle = safeTitleName
+        setupNowPlaying()
+    }
+    
     @objc private func playerDidFinishPlaying() {
+        if ChannelViewModel.shared.channelPlaylist.list.isEmpty {
+            ChannelViewModel.shared.getCurrentChannelPlaylist { isDone in
+                print("playerDidFinishPlaying and loaded: ", isDone)
+                self.setCurrentTitle()
+            }
+            return
+        }
+        ChannelViewModel.shared.channelPlaylist.list.removeFirst()
+        setCurrentTitle()
         print("done")
     }
     

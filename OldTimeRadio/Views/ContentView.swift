@@ -8,12 +8,16 @@
 import SwiftUI
 
 struct ContentView: View {
-    init(channelsViewModel: ChannelViewModel = .shared) {
+    init(
+        channelsViewModel: ChannelViewModel = .shared,
+        playerViewModel: PlayerViewModel = .shared
+    ) {
         _channelsViewModel = StateObject(wrappedValue: channelsViewModel)
+        _playerViewModel = StateObject(wrappedValue: playerViewModel)
     }
     
-    @State var currentTabIndex = 0
     @StateObject var channelsViewModel: ChannelViewModel
+    @StateObject var playerViewModel: PlayerViewModel
     
     var body: some View {
         ZStack {
@@ -22,14 +26,12 @@ struct ContentView: View {
             } else {
                 VStack {
                     ChannelTabsView(
-                        currentTabIndex: $currentTabIndex,
                         channels: channelsViewModel.channels
                     )
-                    .onChange(of: currentTabIndex) { value in
-                        channelsViewModel.getPlayChannelList(channelIndex: value)
-                    }
                     Spacer()
-                    PlayerView()
+                    if playerViewModel.showPlayer {
+                        PlayerView()
+                    }
                 }
             }
         }
@@ -39,7 +41,7 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        let channelViewModel = ChannelViewModel()
+        let channelViewModel = ChannelViewModel.shared
         let channels = [
             Channel(id: "future", name: "future", userChannel: false),
             Channel(id: "western", name: "western", userChannel: false)
@@ -55,6 +57,9 @@ struct ContentView_Previews: PreviewProvider {
         ]
         channelViewModel.channelPlaylist = channelPlaylist
         channelViewModel.channels = channels
-        return ContentView(channelsViewModel: channelViewModel)
+        return ContentView(
+            channelsViewModel: channelViewModel,
+            playerViewModel: PlayerViewModel.shared
+        )
     }
 }

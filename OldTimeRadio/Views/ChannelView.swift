@@ -9,31 +9,55 @@ import SwiftUI
 
 struct ChannelView: View {
     init(
+        playerViewModel: PlayerViewModel = .shared,
         channelsViewModel: ChannelViewModel = .shared,
         channelIndex: Int = 0
+        
     ) {
+        _playerViewModel = StateObject(wrappedValue: playerViewModel)
         _channelsViewModel = StateObject(wrappedValue: channelsViewModel)
         self.channelIndex = channelIndex
     }
+    
+    @StateObject var playerViewModel: PlayerViewModel
     @StateObject var channelsViewModel: ChannelViewModel
 
     var channelIndex = 0
     
     var body: some View {
         VStack {
-            Spacer()
             if channelsViewModel.isLoading == true {
                 Text("Loading...")
+            } else {
+                if let currentChannel = channelsViewModel.currentChannel {
+                    Button {
+                        playerViewModel.clearPlayerQueue()
+                        channelsViewModel.channelPlaylist.list.forEach { show in
+                            playerViewModel.addItemToQueue(url: show.url)
+                        }
+                        playerViewModel.setSeek(
+                            offsetValue: channelsViewModel.channelPlaylist.initialOffset
+                        )
+                        playerViewModel.playAudio()
+                    } label: {
+                        HStack {
+                            Text("Tune in to: \(currentChannel.name.capitalized)")
+                                .font(.largeTitle)
+                            Image(systemName: "radio")
+                                .font(.largeTitle)
+                        }
+                    }
+                } else {
+                    Text("Channel not loaded")
+                }
             }
-        }
-        .onAppear {
-            channelsViewModel.getPlayChannelList(channelIndex: channelIndex)
         }
     }
 }
 
 struct ChannelView_Previews: PreviewProvider {
     static var previews: some View {
+        let playerViewModel = PlayerViewModel()
         let channelViewModel = ChannelViewModel()
         var channelPlaylist = ChanelPlaylist()
         channelPlaylist.initialOffset = 0.0
@@ -51,6 +75,13 @@ struct ChannelView_Previews: PreviewProvider {
             )
         ]
         channelViewModel.channelPlaylist = channelPlaylist
-        return ChannelView(channelsViewModel:channelViewModel)
+        channelViewModel.channels = [
+            Channel(id: "future", name: "future", userChannel: false)
+        ]
+        channelViewModel.isLoading = false
+        return ChannelView(
+            playerViewModel: playerViewModel,
+            channelsViewModel: channelViewModel
+        )
     }
 }

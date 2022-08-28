@@ -13,6 +13,7 @@ final class ChannelViewModel: ObservableObject {
     @Published var channels: [Channel] = []
     @Published var shows:[Show] = []
     @Published var channelPlaylist = ChanelPlaylist()
+    @Published var currentChannel: Channel?
     
     @Published var showData = false
     @Published var isLoading = false
@@ -49,12 +50,29 @@ final class ChannelViewModel: ObservableObject {
             dataService.getPlayChannelList(chanelName: channels[channelIndex].name) { resp in
                 self.channelPlaylist = resp
                 self.showData = self.channelPlaylist.list.isEmpty == false
-                print(self.channelPlaylist.initialOffset)
+                self.currentChannel = self.channels[channelIndex]
                 self.isLoading = false
             }
         } else {
             isLoading = false
             return
+        }
+    }
+    
+    func getCurrentChannelPlaylist(completion: @escaping (Bool) -> Void) {
+        isLoading = true
+        showData = false
+        guard let safeChannel = currentChannel else {
+            print("no channel??")
+            completion(false)
+            isLoading = false
+            return
+        }
+        dataService.getPlayChannelList(chanelName: safeChannel.name) { resp in
+            self.channelPlaylist = resp
+            self.showData = self.channelPlaylist.list.isEmpty == false
+            completion(true)
+            self.isLoading = false
         }
     }
 }

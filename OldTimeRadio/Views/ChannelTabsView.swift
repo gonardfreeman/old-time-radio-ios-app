@@ -8,9 +8,19 @@
 import SwiftUI
 
 struct ChannelTabsView: View {
-    @Namespace var namespace
-    @Binding var currentTabIndex: Int
+    init(
+        channels: [Channel],
+        channelsViewModel: ChannelViewModel = .shared
+    ) {
+        self.channels = channels
+        _channelsViewModel = StateObject(wrappedValue: channelsViewModel)
+    }
+    
     @State var channels: [Channel]
+    @StateObject var channelsViewModel: ChannelViewModel
+    
+    @State private var currentTabIndex = 0
+    @Namespace private var namespace
     
     var body: some View {
         ZStack(alignment: .top) {
@@ -19,6 +29,9 @@ struct ChannelTabsView: View {
                     ChannelView(channelIndex: index)
                 }
             }
+            .onChange(of: currentTabIndex) { curTabIndex in
+                channelsViewModel.getPlayChannelList(channelIndex: curTabIndex)
+            }
             .tabViewStyle(.page(indexDisplayMode: .never))
             .edgesIgnoringSafeArea(.all)
             NavigationBarView(
@@ -26,6 +39,9 @@ struct ChannelTabsView: View {
                 channels: channels,
                 namespace: namespace
             )
+        }
+        .onAppear {
+            channelsViewModel.getPlayChannelList(channelIndex: currentTabIndex)
         }
     }
 }
@@ -37,8 +53,6 @@ struct ChannelTabsView_Previews: PreviewProvider {
         let channel1 = Channel(id: "western", name: "western", userChannel: false)
         let channel2 = Channel(id: "horror", name: "horror", userChannel: false)
         return ChannelTabsView(
-            namespace: _namespace,
-            currentTabIndex: .constant(0),
             channels: [channel, channel1, channel2]
         )
     }
