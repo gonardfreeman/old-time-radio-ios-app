@@ -1,13 +1,13 @@
 //
-//  ContentView.swift
+//  PlaylistView.swift
 //  OldTimeRadio
 //
-//  Created by Dima Bondarenko on 31.07.2022.
+//  Created by Dima Bondarenko on 28.08.2022.
 //
 
 import SwiftUI
 
-struct ContentView: View {
+struct PlaylistView: View {
     init(
         channelsViewModel: ChannelViewModel = .shared,
         playerViewModel: PlayerViewModel = .shared
@@ -16,39 +16,22 @@ struct ContentView: View {
         _playerViewModel = StateObject(wrappedValue: playerViewModel)
     }
     
-    @State var isShowingSheet = false
     @StateObject var channelsViewModel: ChannelViewModel
     @StateObject var playerViewModel: PlayerViewModel
     
-    
     var body: some View {
-        ZStack {
-            if channelsViewModel.channels.isEmpty {
-                Text("Loading")
-            } else {
-                VStack {
-                    ChannelTabsView(
-                        channels: channelsViewModel.channels
-                    )
-                    Spacer()
-                    if playerViewModel.showPlayer {
-                        PlayerView()
-                            .sheet(isPresented: $isShowingSheet) {
-                                PlaylistView()
-                            }
-                            .onTapGesture {
-                                print("tap")
-                                isShowingSheet.toggle()
-                            }
-                    }
+        VStack {
+            if let safeTitle = playerViewModel.currentTitle {
+                Text(safeTitle)
+                List(channelsViewModel.channelPlaylist.list) { item in
+                    Text(item.name)
                 }
             }
         }
-        .onAppear(perform: channelsViewModel.getChannels)
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
+struct PlaylistView_Previews: PreviewProvider {
     static var previews: some View {
         let channelViewModel = ChannelViewModel.shared
         let channels = [
@@ -66,7 +49,7 @@ struct ContentView_Previews: PreviewProvider {
         ]
         channelViewModel.channelPlaylist = channelPlaylist
         channelViewModel.channels = channels
-        return ContentView(
+        return PlaylistView(
             channelsViewModel: channelViewModel,
             playerViewModel: PlayerViewModel.shared
         )
