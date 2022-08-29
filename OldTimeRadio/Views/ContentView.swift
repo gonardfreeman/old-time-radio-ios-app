@@ -33,13 +33,15 @@ struct ContentView: View {
                     Spacer()
                     if playerViewModel.showPlayer {
                         PlayerView()
+                            .cornerRadius(10)
+                            .padding([.leading, .trailing], 20)
                             .sheet(isPresented: $isShowingSheet) {
                                 PlaylistView()
                             }
                             .onTapGesture {
-                                print("tap")
                                 isShowingSheet.toggle()
                             }
+                        Spacer()
                     }
                 }
             }
@@ -66,6 +68,7 @@ struct ContentView_Previews: PreviewProvider {
         ]
         channelViewModel.channelPlaylist = channelPlaylist
         channelViewModel.channels = channels
+        PlayerViewModel.shared.showPlayer = true
         return ContentView(
             channelsViewModel: channelViewModel,
             playerViewModel: PlayerViewModel.shared

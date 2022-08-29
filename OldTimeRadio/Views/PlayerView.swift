@@ -19,6 +19,13 @@ struct PlayerView: View {
     
     var body: some View {
         HStack {
+            if let currentTitle = playerViewModel.currentTitle {
+                Text(currentTitle)
+                    .truncationMode(.tail)
+            } else {
+                Text("Please select channel")
+            }
+            Spacer()
             Button(action: {
                 if playerViewModel.hasItemsToPlay() {
                     playerViewModel.toggleAudio()
@@ -28,15 +35,9 @@ struct PlayerView: View {
                     .font(.largeTitle)
             }
             .frame(width: 40, height: 40)
-            if let currentTitle = playerViewModel.currentTitle {
-                Text(currentTitle)
-                    .truncationMode(.tail)
-            } else {
-                Text("Please select channel")
-            }
+            
         }
-        .frame(height: 50)
-        .frame(maxWidth: .infinity)
+        .padding(5)
         .background(Color("BackgroundGray"))
     }
 }
