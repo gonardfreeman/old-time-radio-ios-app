@@ -32,6 +32,7 @@ struct ChannelView: View {
                 if let currentChannel = channelsViewModel.currentChannel {
                     Button {
                         playerViewModel.clearPlayerQueue()
+                        playerViewModel.setUpNext(items: channelsViewModel.channelPlaylist.list)
                         channelsViewModel.channelPlaylist.list.forEach { show in
                             playerViewModel.addItemToQueue(url: show.url)
                         }
@@ -39,6 +40,7 @@ struct ChannelView: View {
                             offsetValue: channelsViewModel.channelPlaylist.initialOffset
                         )
                         playerViewModel.playAudio()
+                        
                     } label: {
                         HStack {
                             Text("Tune in to: \(currentChannel.name.capitalized)")

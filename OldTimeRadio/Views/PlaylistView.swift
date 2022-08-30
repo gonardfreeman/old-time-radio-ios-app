@@ -25,8 +25,14 @@ struct PlaylistView: View {
                 Text(safeTitle)
                     .font(.largeTitle)
                     .padding()
-                List(channelsViewModel.channelPlaylist.list) { item in
-                    Text(item.name)
+                List {
+                    Section {
+                        ForEach(playerViewModel.upNext) { item in
+                            Text(item.name)
+                        }
+                    } header: {
+                        Text("Up Next")
+                    }
                 }
             }
         }

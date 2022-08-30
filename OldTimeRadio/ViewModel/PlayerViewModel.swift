@@ -25,6 +25,7 @@ final class PlayerViewModel: ObservableObject {
     @Published var isPlaying = false
     @Published var currentlyPlaing = 0
     @Published var currentTitle: String?
+    @Published var upNext = [PlayListItem]()
     
     var playerQueue = AVQueuePlayer()
     
@@ -34,6 +35,15 @@ final class PlayerViewModel: ObservableObject {
     
     func hasItemsToPlay() -> Bool {
         return playerQueue.currentItem != nil
+    }
+    
+    func setUpNext(items: [PlayListItem]) {
+        if items.isEmpty {
+            return
+        }
+        var mutating = items
+        mutating.removeFirst()
+        self.upNext = mutating
     }
     
     func addItemToQueue(url source: String) {
