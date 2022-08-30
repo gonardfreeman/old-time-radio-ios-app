@@ -35,6 +35,7 @@ struct ContentView: View {
                         PlayerView()
                             .cornerRadius(10)
                             .padding([.leading, .trailing], 20)
+                            .shadow(radius: 3)
                             .sheet(isPresented: $isShowingSheet) {
                                 PlaylistView()
                             }
@@ -69,6 +70,7 @@ struct ContentView_Previews: PreviewProvider {
         channelViewModel.channelPlaylist = channelPlaylist
         channelViewModel.channels = channels
         PlayerViewModel.shared.showPlayer = true
+        PlayerViewModel.shared.currentTitle = "Space Patrol"
         return ContentView(
             channelsViewModel: channelViewModel,
             playerViewModel: PlayerViewModel.shared
