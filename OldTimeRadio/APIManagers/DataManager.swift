@@ -11,6 +11,7 @@ protocol DataServiceProtocol {
     func getPlayChannelList(chanelName: String, completion: @escaping (ChanelPlaylist) -> Void)
     func getShows(completion: @escaping ([Show]) -> Void)
     func getChannels(completion: @escaping ([Channel]) -> Void)
+    func getShowMetadata(showURL: String, completion: @escaping (Metadata) -> Void)
 }
 
 final class DataManager: DataServiceProtocol {
@@ -47,6 +48,24 @@ final class DataManager: DataServiceProtocol {
             } catch let error {
                 print("error decoding:", error)
                 completion([])
+            }
+        }
+    }
+    
+    func getShowMetadata(showURL: String, completion: @escaping (Metadata) -> Void) {
+        makeRequest(url: showURL) { resp in
+            let parser = MetaXMLParser(data: resp)
+            if parser.parse() {
+                guard let safeMetadata = parser.showMetadata else {
+                    return
+                }
+                completion(safeMetadata)
+            } else {
+                if let error = parser.parserError {
+                    print(error)
+                } else {
+                    print("Failed with unknown reason")
+                }
             }
         }
     }

@@ -14,6 +14,7 @@ final class ChannelViewModel: ObservableObject {
     @Published var shows:[Show] = []
     @Published var channelPlaylist = ChanelPlaylist()
     @Published var currentChannel: Channel?
+    @Published var showMetadata: Metadata?
     
     @Published var showData = false
     @Published var isLoading = false
@@ -73,6 +74,18 @@ final class ChannelViewModel: ObservableObject {
             self.showData = self.channelPlaylist.list.isEmpty == false
             completion(true)
             self.isLoading = false
+        }
+    }
+    
+    func getCurrentShowInfo() {
+        if let safeURL = channelPlaylist.list.first?.url {
+            let helper = ArchiveURLHelper(mp3: safeURL)
+            guard let safeMetaURL = helper.getMetaURI() else {
+                return
+            }
+            dataService.getShowMetadata(showURL: safeMetaURL) { resp in
+                self.showMetadata = resp
+            }
         }
     }
 }

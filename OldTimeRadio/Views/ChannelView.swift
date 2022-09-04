@@ -30,23 +30,41 @@ struct ChannelView: View {
                 Text("Loading...")
             } else {
                 if let currentChannel = channelsViewModel.currentChannel {
-                    Button {
-                        playerViewModel.clearPlayerQueue()
-                        playerViewModel.setUpNext(items: channelsViewModel.channelPlaylist.list)
-                        channelsViewModel.channelPlaylist.list.forEach { show in
-                            playerViewModel.addItemToQueue(url: show.url)
+                    VStack {
+                        if let safeShowMetadata = channelsViewModel.showMetadata {
+                            ScrollView {
+                                HStack {
+                                    Text("Title: ")
+                                        .font(.title2)
+                                    Text(safeShowMetadata.title ?? "No title")
+                                        .font(.title2)
+                                }
+                                HStack {
+                                    Text("Description: ")
+                                    Text(safeShowMetadata.description?.string ?? "")
+                                }
+                            }
+                        } else {
+                            Spacer()
                         }
-                        playerViewModel.setSeek(
-                            offsetValue: channelsViewModel.channelPlaylist.initialOffset
-                        )
-                        playerViewModel.playAudio()
-                        
-                    } label: {
-                        HStack {
-                            Text("Tune in to: \(currentChannel.name.capitalized)")
-                                .font(.largeTitle)
-                            Image(systemName: "radio")
-                                .font(.largeTitle)
+                        Button {
+                            playerViewModel.clearPlayerQueue()
+                            playerViewModel.setUpNext(items: channelsViewModel.channelPlaylist.list)
+                            channelsViewModel.channelPlaylist.list.forEach { show in
+                                playerViewModel.addItemToQueue(url: show.url)
+                            }
+                            playerViewModel.setSeek(
+                                offsetValue: channelsViewModel.channelPlaylist.initialOffset
+                            )
+                            playerViewModel.playAudio()
+                            channelsViewModel.getCurrentShowInfo()
+                        } label: {
+                            HStack {
+                                Text("Tune in to: \(currentChannel.name.capitalized)")
+                                    .font(.largeTitle)
+                                Image(systemName: "radio")
+                                    .font(.largeTitle)
+                            }
                         }
                     }
                 } else {
