@@ -87,7 +87,7 @@ extension MetaXMLParser: XMLParserDelegate {
                 showMetadata?.addeddate = safeDate
             }
         case "mediatype":
-            showMetadata?.uploader = textBuffer
+            showMetadata?.mediatype = textBuffer
         case "title":
             showMetadata?.title = textBuffer
         case "description":

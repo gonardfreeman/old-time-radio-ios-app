@@ -27,6 +27,7 @@ struct ChannelTabsView: View {
             TabView(selection: $currentTabIndex) {
                 ForEach(Array(channels.enumerated()), id: \.offset) { index, element in
                     ChannelView(channelIndex: index)
+                        .padding(.top, 60)
                 }
             }
             .onChange(of: currentTabIndex) { curTabIndex in
@@ -77,7 +78,7 @@ struct ChannelTabsView_Previews: PreviewProvider {
         ChannelViewModel.shared.showMetadata = Metadata(
             identifier: "123",
             title: "Space Patrol",
-            mediatype: .audio,
+            mediatype: "audio",
             collection: "oldtimeradio",
             description: parseHTML(html: htmlString),
             subject: "",

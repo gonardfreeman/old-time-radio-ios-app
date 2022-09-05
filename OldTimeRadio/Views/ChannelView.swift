@@ -32,17 +32,26 @@ struct ChannelView: View {
                 if let currentChannel = channelsViewModel.currentChannel {
                     VStack {
                         if let safeShowMetadata = channelsViewModel.showMetadata {
-                            ScrollView {
-                                HStack {
-                                    Text("Title: ")
-                                        .font(.title2)
-                                    Text(safeShowMetadata.title ?? "No title")
-                                        .font(.title2)
+                            List {
+                                Text(safeShowMetadata.title ?? "No Title")
+                                    .font(.largeTitle)
+                                if let safeSubject = safeShowMetadata.subject {
+                                    Section(header: Text("Subject")) {
+                                        Text(safeSubject)
+                                    }
                                 }
-                                HStack {
-                                    Text("Description: ")
+                                Section(header: Text("Added")) {
+                                    Text(safeShowMetadata.addeddate, style: .date)
+                                }
+                                if let safeURL = URL(string: "mailto:\(safeShowMetadata.uploader)") {
+                                    Section(header: Text("Uploader")) {
+                                        Link(safeShowMetadata.uploader, destination: safeURL)
+                                    }
+                                }
+                                Section(header: Text("Description")) {
                                     Text(safeShowMetadata.description?.string ?? "")
                                 }
+                                
                             }
                         } else {
                             Spacer()
@@ -57,7 +66,6 @@ struct ChannelView: View {
                                 offsetValue: channelsViewModel.channelPlaylist.initialOffset
                             )
                             playerViewModel.playAudio()
-                            channelsViewModel.getCurrentShowInfo()
                         } label: {
                             HStack {
                                 Text("Tune in to: \(currentChannel.name.capitalized)")

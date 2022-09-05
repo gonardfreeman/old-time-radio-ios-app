@@ -52,6 +52,7 @@ final class ChannelViewModel: ObservableObject {
                 self.channelPlaylist = resp
                 self.showData = self.channelPlaylist.list.isEmpty == false
                 self.currentChannel = self.channels[channelIndex]
+                self.getCurrentShowInfo()
                 self.isLoading = false
             }
         } else {

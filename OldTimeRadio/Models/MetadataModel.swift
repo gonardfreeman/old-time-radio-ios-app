@@ -23,7 +23,7 @@ enum MediaType {
 struct Metadata {
     var identifier: String = ""
     var title: String?
-    var mediatype: MediaType = .audio
+    var mediatype: String = "texts"
     var collection: String?
     var description: NSAttributedString?
     var subject: String?
